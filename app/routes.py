@@ -28,6 +28,7 @@ def posts_index():
     ]
     return render_template('posts_index.html', posts=posts)
 
+
 # TODO: remove after debugging
 def _config_to_dict(config):
     return {key: str(value) for key, value in config.items()}
