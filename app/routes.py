@@ -1,4 +1,7 @@
-from flask import render_template
+from flask import (
+    jsonify,
+    render_template
+)
 from app import app
 
 
@@ -24,3 +27,14 @@ def posts_index():
         }
     ]
     return render_template('posts_index.html', posts=posts)
+
+# TODO: remove after debugging
+def _config_to_dict(config):
+    return {key: str(value) for key, value in config.items()}
+
+
+@app.route('/config')
+def app_config():
+    app.logger.info("Config: %s", app.config)
+    config_dict = _config_to_dict(app.config)
+    return jsonify(config_dict)
