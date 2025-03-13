@@ -9,3 +9,9 @@ dev:
 
 db-init:
 	uv run flask db init
+
+flask-shell:
+	uv run flask shell
+
+python:
+	uv run .venv/bin/python
