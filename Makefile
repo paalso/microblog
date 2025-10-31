@@ -1,3 +1,19 @@
+# Default port for dev server
+PORT ?= 5000
+
+# ---------------------------------------------------------------------
+# 🚀 Development and Run
+# ---------------------------------------------------------------------
+
+dev:
+	uv run python3 -m flask --app microblog run --debug --port=$(PORT)
+
+routes:
+	uv run python3 -m flask --app microblog routes
+
+shell:
+	uv run python3
+
 # ---------------------------------------------------------------------
 # 🧪 Tests and Lint
 # ---------------------------------------------------------------------
