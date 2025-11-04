@@ -7,6 +7,7 @@ from app.forms import LoginForm
 @app.route('/')
 @app.route('/index')
 def index():
+    app.logger.debug('Debug from index!')
     user = {'username': 'Paul'}
     posts = [
         {
@@ -25,7 +26,7 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        print(f'form: {request.form}')
+        app.logger.debug(f'form: {request.form}')
         flash('Login requested for user {}, remember_me={}'.format(
             form.username.data, form.remember_me.data))
         return redirect(url_for('login'))
