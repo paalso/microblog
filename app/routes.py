@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template, request, url_for
 
 from app import app
 from app.forms import LoginForm
@@ -25,6 +25,7 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        print(f'form: {request.form}')
         flash('Login requested for user {}, remember_me={}'.format(
             form.username.data, form.remember_me.data))
         return redirect(url_for('login'))
