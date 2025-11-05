@@ -11,5 +11,18 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "djlint>=1.36.4",
     "ruff>=0.14.2",
 ]
+
+[tool.djlint]
+profile = "jinja"
+indent = 2
+extension = ["html", "jinja", "jinja2"]
+ignore = ["venv", "node_modules", "migrations"]
+use_gitignore = true
+max_line_length = 120
+format_css = true
+format_js = true
+ignore_codes = ["H031", "H006"]
+preserve_blank_lines = false
