@@ -17,8 +17,33 @@ shell:
 # ---------------------------------------------------------------------
 # 🗃️ Database Management
 # ---------------------------------------------------------------------
-db-init:
-	uv run flask db init
+db-init:  ## Initialize migrations directory
+	@uv run flask db init
+
+db-migrate:  ## Generate new migration (usage: make db-migrate m="Message")
+	@uv run flask db migrate -m "$(m)"
+
+db-upgrade:  ## Apply all migrations
+	@uv run flask db upgrade
+
+db-downgrade:  ## Revert last migration
+	@uv run flask db downgrade
+
+db-history:  ## Show migration history
+	@uv run flask db history
+
+db-current:  ## Show current migration version
+	@uv run flask db current
+
+db-heads:  ## Show head revisions (latest migrations)
+	@uv run flask db heads
+
+db-show:  ## Show details of a specific revision (usage: make db-show r=<rev>)
+	@uv run flask db show $(r)
+
+db-reset:  ## Drop and recreate the database schema (dangerous!)
+	@uv run flask db downgrade base
+	@uv run flask db upgrade
 
 # ---------------------------------------------------------------------
 # 🧪 Tests and Lint
