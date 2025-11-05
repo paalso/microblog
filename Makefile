@@ -1,5 +1,6 @@
 # Default port for dev server
 PORT ?= 5000
+DB_PATH = instance/app.db
 
 # ---------------------------------------------------------------------
 # 🚀 Development and Run
@@ -44,6 +45,16 @@ db-show:  ## Show details of a specific revision (usage: make db-show r=<rev>)
 db-reset:  ## Drop and recreate the database schema (dangerous!)
 	@uv run flask db downgrade base
 	@uv run flask db upgrade
+
+sqlite: ## Open SQLite shell
+	@echo "Opening SQLite shell for $(DB_PATH)..."
+	@sqlite3 $(DB_PATH)
+
+db-tables: ## Show SQLite DB table list
+	@sqlite3 $(DB_PATH) ".tables"
+
+db-schema: ## Show SQLite DB table schema
+	@sqlite3 $(DB_PATH) ".schema"
 
 # ---------------------------------------------------------------------
 # 🧪 Tests and Lint
