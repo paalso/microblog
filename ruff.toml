@@ -1,5 +1,7 @@
 line-length = 80
 
+extend-exclude = ["migrations", ".venv"]
+
 [lint.per-file-ignores]
   # init modules can contain the local imports, logic, unused imports
 "__init__.py" = ["F401", "E402"]
