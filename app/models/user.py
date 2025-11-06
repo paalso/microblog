@@ -4,9 +4,10 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 
 from app import db
+from app.models.mixins import TimestampMixin
 
 
-class User(db.Model):
+class User(TimestampMixin, db.Model):
     __tablename__ = 'users'
 
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
