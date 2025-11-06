@@ -17,7 +17,7 @@ class User(TimestampMixin, db.Model):
                                              unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
 
-    posts: so.WriteOnlyMapped['Post'] = so.relationship(
+    posts: so.WriteOnlyMapped['Post'] = so.relationship(        # noqa: F821
         'Post', back_populates='author')
 
     def __repr__(self):

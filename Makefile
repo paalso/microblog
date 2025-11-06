@@ -13,7 +13,7 @@ routes:
 	uv run python3 -m flask --app microblog routes
 
 shell:
-	uv run python3
+	uv run flask --app microblog shell
 
 # ---------------------------------------------------------------------
 # 🗃️ Database Management

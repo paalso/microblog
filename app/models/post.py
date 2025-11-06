@@ -13,7 +13,7 @@ class Post(TimestampMixin, db.Model):
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('users.id'),
                                                index=True)
 
-    author: so.Mapped['User'] = so.relationship(
+    author: so.Mapped['User'] = so.relationship(    # noqa: F821
         'User', back_populates='posts')
 
     def __repr__(self):

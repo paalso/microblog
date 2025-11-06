@@ -4,7 +4,7 @@ extend-exclude = ["migrations", ".venv"]
 
 [lint.per-file-ignores]
   # init modules can contain the local imports, logic, unused imports
-"__init__.py" = ["F401", "E402"]
+"__init__.py" = ["F401", "E402", "F403", "F406", "I001"]
 "microblog.py" = ["F401"]
 
 [lint]
