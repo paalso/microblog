@@ -46,16 +46,18 @@ db-reset:  ## Drop and recreate the database schema (dangerous!)
 	@uv run flask db downgrade base
 	@uv run flask db upgrade
 
-sqlite: ## Open SQLite shell
-	@echo "Opening SQLite shell for $(DB_PATH)..."
-	@sqlite3 $(DB_PATH)
-
 db-tables: ## Show SQLite DB table list
 	@sqlite3 $(DB_PATH) ".tables"
 
 db-schema: ## Show SQLite DB table schema
 	@sqlite3 $(DB_PATH) ".schema"
 
+db-shell: ## Open SQLite shell
+	@echo "Opening SQLite shell for $(DB_PATH)..."
+	@sqlite3 $(DB_PATH)
+
+sqlite: ## Open SQLite shell
+	@make db-shell
 # ---------------------------------------------------------------------
 # 🧪 Tests and Lint
 # ---------------------------------------------------------------------
