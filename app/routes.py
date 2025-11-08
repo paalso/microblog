@@ -1,14 +1,18 @@
-from flask import flash, redirect, render_template, request, url_for
+from urllib.parse import urlsplit
 
-from app import app
+import sqlalchemy as sa
+from flask import flash, g, redirect, render_template, request, session, url_for
+from flask_login import current_user, login_required, login_user, logout_user
+
+from app import app, db
 from app.forms import LoginForm
+from app.models.user import User
 
 
 @app.route('/')
 @app.route('/index')
+@login_required
 def index():
-    app.logger.debug('Debug from index!')
-    user = {'username': 'Paul'}
     posts = [
         {
             'author': {'username': 'John'},
@@ -19,16 +23,47 @@ def index():
             'body': 'The Avengers movie was so cool!'
         }
     ]
-    return render_template('index.html', title='Home', user=user, posts=posts)
+    return render_template('index.html', title='Home', posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    app.logger.debug(f'current_user: ${current_user}')
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        app.logger.debug(f'form: {request.form}')
-        flash('Login requested for user {}, remember_me={}'.format(
-            form.username.data, form.remember_me.data))
-        return redirect(url_for('login'))
-    print(form.errors)
+        user = db.session.scalar(
+            sa.select(User).where(User.username == form.username.data))
+        app.logger.debug(f'user: ${user}')
+
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+
+        login_user(user, remember=form.remember_me.data)
+
+        app.logger.debug(f'request.args: ${request.args}')
+        next_page = request.args.get('next')
+        if not next_page or urlsplit(next_page).netloc != '':
+            next_page = url_for('index')
+        return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
+@app.route('/debug')
+def debug():
+    print("--- Request context info ---")
+    print("request:", request)
+    print("path:", request.path)
+    print("method:", request.method)
+    print("session:", dict(session))
+    print("current_user:", current_user)
+    print("g:", g)
+    return "Check your terminal or log!"

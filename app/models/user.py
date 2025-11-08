@@ -5,7 +5,7 @@ import sqlalchemy.orm as so
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app import db
+from app import db, login
 from app.models.mixins import TimestampMixin
 
 
@@ -30,3 +30,8 @@ class User(TimestampMixin, UserMixin, db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+
+@login.user_loader
+def load_user(id):
+    return db.session.get(User, int(id))
