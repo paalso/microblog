@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Current user: {{ current_user.username }}</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>username</th>
+        <th>email</th>
+        <th>role</th>
+        <th>created_at</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>{{ user.created_at.strftime("%Y %b %d %H:%M") }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

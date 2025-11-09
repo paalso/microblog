@@ -73,6 +73,17 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
+@app.route('/users')
+def users():
+    if current_user.is_anonymous or not current_user.is_admin:
+        flash(
+            "You don't have the necessary permissions to view the user list.")
+        return redirect(url_for('index'))
+
+    users = db.session.query(User).all()
+    return render_template('admin/users.html', title='Users', users=users)
+
+
 @app.route('/debug')
 def debug():
     print("--- Request context info ---")
