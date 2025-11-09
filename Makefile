@@ -1,5 +1,6 @@
 # Default port for dev server
 PORT ?= 5000
+DEBUG_PORT ?= 5001
 DB_PATH = instance/app.db
 
 .PHONY: help
@@ -14,7 +15,10 @@ sync:  ## Install project dependencies using uv
 	@uv sync
 
 dev: ## Run in development mode
-	uv run python3 -m flask --app microblog run --debug --port=$(PORT)
+	uv run python3 -m flask --app microblog run --debug --port=$(DEBUG_PORT)
+
+run: ## Run in development mode
+	uv run python3 -m flask --app microblog run --port=$(PORT)
 
 routes: ## Show routes
 	uv run python3 -m flask --app microblog routes
