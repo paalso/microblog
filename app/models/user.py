@@ -22,6 +22,8 @@ class User(TimestampMixin, UserMixin, db.Model):
     posts: so.WriteOnlyMapped['Post'] = so.relationship(        # noqa: F821
         'Post', back_populates='author')
 
+    role: so.Mapped[str] = so.mapped_column(sa.String(20), default='user')
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
