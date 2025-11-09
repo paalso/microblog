@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from urllib.parse import urlsplit
 
 import sqlalchemy as sa
@@ -95,6 +96,14 @@ def user(username):
     return render_template('user.html', user=user, posts=posts)
 
 
+@app.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.now(timezone.utc)
+        db.session.commit()
+
+
+# ------------------------------------------------------------
 @app.route('/debug')
 def debug():
     print("--- Request context info ---")
