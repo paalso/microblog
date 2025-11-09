@@ -2,17 +2,24 @@
 PORT ?= 5000
 DB_PATH = instance/app.db
 
+.PHONY: help
+help:  ## Show this help message
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
+
 # ---------------------------------------------------------------------
 # 🚀 Development and Run
 # ---------------------------------------------------------------------
 
-dev:
+sync:  ## Install project dependencies using uv
+	@uv sync
+
+dev: ## Run in development mode
 	uv run python3 -m flask --app microblog run --debug --port=$(PORT)
 
-routes:
+routes: ## Show routes
 	uv run python3 -m flask --app microblog routes
 
-shell:
+shell: ## Launch Flask shell
 	uv run flask --app microblog shell
 
 # ---------------------------------------------------------------------
@@ -72,10 +79,10 @@ code-lint-fix:  ## Auto-fix Python code issues
 	@uv run ruff check --fix
 
 template-lint:  ## Lint HTML templates with djlint
-	@uv run djlint $$(find app -type d -name templates)
+	@uv run djlint $$(find app -type f -path "*/templates/*")
 
 template-lint-fix:  ## Auto-fix HTML templates with djlint
-	@uv run djlint $$(find app -type d -name templates) --reformat
+	@uv run djlint $$(find app -type f -path "*/templates/*") --reformat
 
 lint:  ## Run all linters (Ruff + djlint)
 	@$(MAKE) code-lint
