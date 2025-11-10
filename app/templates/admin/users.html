@@ -9,16 +9,21 @@
         <th>email</th>
         <th>role</th>
         <th>created_at</th>
+        <th>last seen</th>
       </tr>
     </thead>
     <tbody>
       {% for user in users %}
         <tr>
           <td>{{ user.id }}</td>
+          <td>
+            <img src="{{ user.avatar(36) }}">
+          </td>
           <td>{{ user.username }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
           <td>{{ user.created_at.strftime("%Y %b %d %H:%M") }}</td>
+          <td>{{ user.last_seen.strftime("%Y %b %d %H:%M") }}</td>
         </tr>
       {% endfor %}
     </tbody>
