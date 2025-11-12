@@ -14,6 +14,17 @@ help:  ## Show this help message
 sync:  ## Install project dependencies using uv
 	@uv sync
 
+setup:  ## Initialize dev environment (create instance dir, install deps, migrate DB)
+	@echo "🔧 Setting up development environment..."
+	@uv sync
+	@if [ ! -f $(DB_PATH) ]; then \
+		echo "🧱 Database not found, running migrations..."; \
+		uv run flask db upgrade; \
+	else \
+		echo "✅ Database already exists: $(DB_PATH)"; \
+	fi
+	@echo "✅ Setup complete! Run 'make dev'"
+
 dev: ## Run in development mode
 	uv run python3 -m flask --app microblog run --debug --port=$(DEBUG_PORT)
 

@@ -2,6 +2,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
+
 # TODO: complete
 def configure_logging(app):
     # if app.debug or app.testing:
