@@ -71,6 +71,12 @@ db-reset:  ## Drop and recreate the database schema (dangerous!)
 db-tables: ## Show SQLite DB table list
 	@sqlite3 $(DB_PATH) ".tables"
 
+db-status:  ## Show current DB revision and pending migrations
+	@echo "=== Database Status ==="
+	@CURRENT=$$(uv run flask db current 2>/dev/null | tail -n1); \
+	echo "Current DB revision: $$CURRENT"; \
+	uv run flask db heads --verbose 2>/dev/null | awk '/Rev:/ && /head/ {getline; print "→ Pending migration(s):"; getline; gsub(/^ +/, ""); print}'
+
 db-schema: ## Show SQLite DB table schema
 	@sqlite3 $(DB_PATH) ".schema"
 
