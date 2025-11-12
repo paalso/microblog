@@ -10,6 +10,15 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app import db, login
 from app.models.mixins import TimestampMixin
 
+followers = sa.Table(
+    'followers',
+    db.metadata,
+    sa.Column('follower_id', sa.Integer, sa.ForeignKey('users.id'),
+              primary_key=True),
+    sa.Column('followed_id', sa.Integer, sa.ForeignKey('users.id'),
+              primary_key=True)
+)
+
 
 class User(TimestampMixin, UserMixin, db.Model):
     __tablename__ = 'users'
@@ -21,7 +30,7 @@ class User(TimestampMixin, UserMixin, db.Model):
                                              unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
 
-    posts: so.WriteOnlyMapped['Post'] = so.relationship(        # noqa: F821
+    posts: so.WriteOnlyMapped['Post'] = so.relationship(  # noqa: F821
         'Post', back_populates='author')
 
     role: so.Mapped[str] = so.mapped_column(sa.String(20), default='user')
@@ -30,6 +39,16 @@ class User(TimestampMixin, UserMixin, db.Model):
 
     last_seen: so.Mapped[Optional[datetime]] = so.mapped_column(
         default=lambda: datetime.now(timezone.utc))
+
+    following: so.WriteOnlyMapped['User'] = so.relationship(
+        secondary=followers, primaryjoin=(followers.c.follower_id == id),
+        secondaryjoin=(followers.c.followed_id == id),
+        back_populates='followers')
+
+    followers: so.WriteOnlyMapped['User'] = so.relationship(
+        secondary=followers, primaryjoin=(followers.c.followed_id == id),
+        secondaryjoin=(followers.c.follower_id == id),
+        back_populates='following')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
