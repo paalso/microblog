@@ -42,3 +42,5 @@ Open your app at http://localhost:5001
 [Flask's quick start page](https://flask.palletsprojects.com/en/stable/quickstart/)
 
 [Gravatar](https://gravatar.com/)
+
+[SQLite Playground](https://sqlime.org/)

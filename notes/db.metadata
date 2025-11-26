@@ -1,0 +1,27 @@
+{
+    '_fk_memos': defaultdict(<class 'list'>,
+                              {('users', 'id'): [ForeignKey('users.id'),
+                                                 ForeignKey('users.id'),
+                                                 ForeignKey('users.id')]}),
+     '_schemas': set(),
+     '_sequences': {},
+     'info': {'bind_key': None},
+     'naming_convention': immutabledict({'ix': 'ix_%(column_0_label)s'}),
+     'schema': None,
+     'tables': FacadeDict(
+     {
+     {'_fk_memos': defaultdict(<class 'list'>,
+                          {('users', 'id'): [ForeignKey('users.id'),
+                                             ForeignKey('users.id'),
+                                             ForeignKey('users.id')]}),
+     '_schemas': set(),
+     '_sequences': {},
+     'info': {'bind_key': None},
+     'naming_convention': immutabledict({'ix': 'ix_%(column_0_label)s'}),
+     'schema': None,
+     'tables': FacadeDict(
+        {
+            'followers': Table('followers', MetaData(), Column('follower_id', Integer(), ForeignKey('users.id'), table=<followers>, primary_key=True, nullable=False), Column('followed_id', Integer(), ForeignKey('users.id'), table=<followers>, primary_key=True, nullable=False), schema=None), 'users': Table('users', MetaData(), Column('id', Integer(), table=<users>, primary_key=True, nullable=False), Column('username', String(length=64), table=<users>, nullable=False), Column('email', String(length=120), table=<users>, nullable=False), Column('password_hash', String(length=256), table=<users>), Column('role', String(length=20), table=<users>, nullable=False, default=ScalarElementColumnDefault('user')), Column('about_me', String(length=140), table=<users>), Column('last_seen', DateTime(), table=<users>, default=CallableColumnDefault(<function User.<lambda> at 0x77a393fc9630>)), Column('created_at', DateTime(), table=<users>, nullable=False, default=CallableColumnDefault(<function TimestampMixin.<lambda> at 0x77a393fc8ee0>)), Column('updated_at', DateTime(), table=<users>, nullable=False, onupdate=CallableColumnDefault(<function TimestampMixin.<lambda> at 0x77a393fc91b0>), default=CallableColumnDefault(<function TimestampMixin.<lambda> at 0x77a393fc9120>)), schema=None), 'posts': Table('posts', MetaData(), Column('id', Integer(), table=<posts>, primary_key=True, nullable=False), Column('body', String(length=256), table=<posts>, nullable=False), Column('user_id', Integer(), ForeignKey('users.id'), table=<posts>, nullable=False), Column('created_at', DateTime(), table=<posts>, nullable=False, default=CallableColumnDefault(<function TimestampMixin.<lambda> at 0x77a393fc8ee0>)), Column('updated_at', DateTime(), table=<posts>, nullable=False, onupdate=CallableColumnDefault(<function TimestampMixin.<lambda> at 0x77a393fc91b0>), default=CallableColumnDefault(<function TimestampMixin.<lambda> at 0x77a393fc9120>)), schema=None)}
+     )}'posts': Table('posts', MetaData(), Column('id', Integer(), table=<posts>, primary_key=True, nullable=False), Column('body', String(length=256), table=<posts>, nullable=False), Column('user_id', Integer(), ForeignKey('users.id'), table=<posts>, nullable=False), Column('created_at', DateTime(), table=<posts>, nullable=False, default=CallableColumnDefault(<function TimestampMixin.<lambda> at 0x77a393fc8ee0>)), Column('updated_at', DateTime(), table=<posts>, nullable=False, onupdate=CallableColumnDefault(<function TimestampMixin.<lambda> at 0x77a393fc91b0>), default=CallableColumnDefault(<function TimestampMixin.<lambda> at 0x77a393fc9120>)), schema=None)}
+         )
+}
