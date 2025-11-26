@@ -99,6 +99,17 @@ class User(TimestampMixin, UserMixin, db.Model):
         )
         return db.session.scalar(stmt)
 
+    def following_posts(self):
+        Post = sa.orm.class_mapper(User).registry._class_registry['Post']
+
+        stmt = (
+            sa.select(Post)
+            .join(followers, followers.c.follower_id == Post.user_id)
+            .where(followers.c.followed_id == self.id)
+            .order_by(Post.updated_at.desc())
+        )
+        return db.session.scalars(stmt).all()
+
     # TODO:
     # mutual_friends() — mutual followers
     # suggested_follows() — subscription recommendations
