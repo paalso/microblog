@@ -4,6 +4,7 @@ from urllib.parse import urlsplit
 import sqlalchemy as sa
 from flask import (
     Blueprint,
+    current_app,
     flash,
     g,
     redirect,
@@ -40,14 +41,14 @@ def index():
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    main_bp.logger.debug(f'current_user: ${current_user}')
+    current_app.logger.debug(f'current_user: ${current_user}')
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data))
-        main_bp.logger.debug(f'user: ${user}')
+        current_app.logger.debug(f'user: ${user}')
 
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
@@ -55,7 +56,7 @@ def login():
 
         login_user(user, remember=form.remember_me.data)
 
-        main_bp.logger.debug(f'request.args: ${request.args}')
+        current_app.logger.debug(f'request.args: ${request.args}')
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('main.index')

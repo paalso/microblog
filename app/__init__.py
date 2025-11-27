@@ -9,7 +9,7 @@ from app.config import Config
 db = SQLAlchemy()           # почему не передаем сюда app
 migrate = Migrate()         # почему не передаем сюда app
 login = LoginManager()      # почему не передаем сюда app
-login.login_view = 'login'
+login.login_view = 'main.login'
 
 
 def create_app(config_class=Config):
