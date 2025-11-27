@@ -91,7 +91,7 @@ sqlite: ## Open SQLite shell
 # ---------------------------------------------------------------------
 
 test:
-	uv run pytest
+	uv run python -m pytest
 
 code-lint:  ## Lint Python code with Ruff
 	@uv run ruff check
