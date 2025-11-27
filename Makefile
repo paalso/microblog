@@ -25,17 +25,17 @@ setup:  ## Initialize dev environment (create instance dir, install deps, migrat
 	fi
 	@echo "✅ Setup complete! Run 'make dev'"
 
-dev: ## Run in development mode
-	uv run python3 -m flask --app microblog run --debug --port=$(DEBUG_PORT)
+dev: ## Run in development mode (with debugger, reload, etc.)
+	uv run python3 -m flask run --debug --port=$(DEBUG_PORT)
 
-run: ## Run
-	uv run python3 -m flask --app microblog run --port=$(PORT)
+run: ## Run in production-like mode
+	uv run python3 -m flask run --port=$(PORT) --no-debug
 
 routes: ## Show routes
-	uv run python3 -m flask --app microblog routes
+	uv run python3 -m flask routes
 
 shell: ## Launch Flask shell
-	uv run flask --app microblog shell
+	uv run python3 -m flask shell
 
 # ---------------------------------------------------------------------
 # 🗃️ Database Management

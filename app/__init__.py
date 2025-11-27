@@ -1,14 +1,17 @@
+import sqlalchemy as sa
+import sqlalchemy.orm as so
+
 from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from app.logging_config import configure_logging
 
+from app.logging_config import configure_logging
 from app.config import Config
 
-db = SQLAlchemy()           # почему не передаем сюда app
-migrate = Migrate()         # почему не передаем сюда app
-login = LoginManager()      # почему не передаем сюда app
+db = SQLAlchemy()
+migrate = Migrate()
+login = LoginManager()
 login.login_view = 'main.login'
 
 
@@ -26,5 +29,9 @@ def create_app(config_class=Config):
 
     from app.errors import errors_bp
     app.register_blueprint(errors_bp, url_prefix='')
+
+    @app.shell_context_processor
+    def make_shell_context():
+        return {'sa': sa, 'so': so, 'db': db, 'session': db.session}
 
     return app

@@ -33,3 +33,6 @@ format_css = true
 format_js = true
 ignore_codes = ["H031", "H006"]
 preserve_blank_lines = false
+
+[tool.flask]
+app = "app:create_app()"
