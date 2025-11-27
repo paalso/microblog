@@ -105,7 +105,12 @@ class User(TimestampMixin, UserMixin, db.Model):
         stmt = (
             sa.select(Post)
             .join(followers, followers.c.follower_id == Post.user_id)
-            .where(followers.c.followed_id == self.id)
+            .where(
+                sa.or_(
+                    followers.c.followed_id == self.id,
+                    Post.user_id == self.id
+                )
+            )
             .order_by(Post.updated_at.desc())
         )
         return db.session.scalars(stmt).all()

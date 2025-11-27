@@ -60,6 +60,10 @@ ORDER BY u1.id;
 
 
 --=============================================================================
+\set user_id 2
+\echo :user_id
+2
+
 --following = relationship(     // (на кого я подписан)
 --    secondary=followers,
 --    primaryjoin=(followers.c.follower_id == id),
@@ -74,7 +78,7 @@ ORDER BY u1.id;
 --primaryjoin: followers.follower_id == User.id
 --→ найти строки, где этот User — подписчик
 SELECT * FROM followers
-WHERE follower_id = 2;
+WHERE follower_id = user_id;
 --follower_id  followed_id
 -------------  -----------
 --2            1
@@ -86,7 +90,7 @@ WHERE follower_id = 2;
 --→ взять из этих строк тех, на кого он подписан
 WITH my_followings AS (
     SELECT * FROM followers
-    WHERE follower_id = 2
+    WHERE follower_id = user_id
 )
 SELECT
     u.id, u.username
@@ -111,7 +115,7 @@ JOIN my_followings f ON u.id = f.followed_id;
 --→ выбираем строки таблицы followers, где
 -- followed_id = текущий user.id
 SELECT * FROM followers
-WHERE followed_id = 2;
+WHERE followed_id = user_id;
 --follower_id  followed_id
 -------------  -----------
 --1            2
@@ -122,7 +126,7 @@ WHERE followed_id = 2;
 --→ затем соединяем с таблицей users по users.id = follower_id
 WITH my_followed AS (
     SELECT * FROM followers
-    WHERE followed_id = 2
+    WHERE followed_id := user_id
 )
 SELECT
     u.id, u.username
@@ -132,3 +136,60 @@ JOIN my_followed f ON u.id = f.follower_id;
 ----  --------
 --1   admin
 --5   alice
+
+--то же самое короче
+
+SELECT u.id, u.username
+FROM users u
+JOIN followers f ON u.id = f.follower_id
+WHERE f.followed_id = :user_id;
+
+
+---------------------------------------------------------
+--Все посты моих подписчиков
+\set user 1
+
+SELECT p.id AS post_id, p.body, u.username, u.id AS username_id
+FROM users u
+JOIN followers f ON u.id = f.follower_id
+JOIN posts p ON u.id = p.user_id
+WHERE f.followed_id = :user_id
+ORDER BY p.id DESC;
+
+ post_id |                        body                        | username | username_id
+---------+----------------------------------------------------+----------+-------------
+       8 | Reading about window functions in SQL.             | paalso   |           2
+       7 | Just finished writing a Flask view, feeling great. | tom      |           4
+       5 | It’s a sunny day outside, perfect for coding.      | bob      |           3
+       4 | Working on a new SQL project today.                | paalso   |           2
+(4 rows)
+
+
+SELECT p.id, p.body
+FROM posts p
+JOIN users u ON u.id = p.user_id
+JOIN followers f ON u.id = f.follower_id
+WHERE f.followed_id = :user_id
+ORDER BY p.id DESC;
+ id |                        body
+----+----------------------------------------------------
+  8 | Reading about window functions in SQL.
+  7 | Just finished writing a Flask view, feeling great.
+  5 | It’s a sunny day outside, perfect for coding.
+  4 | Working on a new SQL project today.
+(4 rows)
+
+
+
+SELECT p.id, p.body
+FROM posts p
+JOIN followers f ON p.user_id = f.follower_id
+WHERE f.followed_id = :user_id
+ORDER BY p.id DESC;
+ id |                        body
+----+----------------------------------------------------
+  8 | Reading about window functions in SQL.
+  7 | Just finished writing a Flask view, feeling great.
+  5 | It’s a sunny day outside, perfect for coding.
+  4 | Working on a new SQL project today.
+(4 rows)

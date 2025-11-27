@@ -11,7 +11,9 @@ CREATE TABLE users (
 CREATE TABLE posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     body VARCHAR(256) NOT NULL UNIQUE,
-    user_id INTEGER NOT NULL REFERENCES users(id)
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE followers (
@@ -32,17 +34,20 @@ UPDATE users
 SET role = 'admin'
 WHERE username = 'admin';
 
-INSERT INTO posts (body, user_id) VALUES
-    ('Hello everyone, this is my first post!', 1),
-    ('Working on a new SQL project today.', 2),
-    ('It’s a sunny day outside, perfect for coding.', 3),
-    ('Trying out SQLite foreign keys — looks good!', 1),
-    ('Just finished writing a Flask view, feeling great.', 4),
-    ('Reading about window functions in SQL.', 2),
-    ('Testing unique constraints on posts table.', 1),
-    ('Coffee + coding = perfect morning.', 5),
-    ('Preparing for an interview, practicing JOINs.', 5),
-    ('This platform really helps me debug SQL queries.', 5);
+
+INSERT INTO posts (body, user_id, created_at, updated_at) VALUES
+    ('Hello everyone, this is my first post!', 1, NOW(), NOW()),
+    ('Working on a new SQL project today.', 2, NOW(), NOW()),
+    ('It’s a sunny day outside, perfect for coding.', 3, NOW(), NOW()),
+    ('Trying out SQLite foreign keys — looks good!', 1, NOW(), NOW()),
+    ('Just finished writing a Flask view, feeling great.', 4, NOW(), NOW()),
+    ('Reading about window functions in SQL.', 2, NOW(), NOW()),
+    ('Testing unique constraints on posts table.', 1, NOW(), NOW()),
+    ('Coffee + coding = perfect morning.', 5, NOW(), NOW()),
+    ('Preparing for an interview, practicing JOINs.', 5, NOW(), NOW()),
+    ('This platform really helps me debug SQL queries.', 5, NOW(), NOW());
+
+
 
 INSERT INTO followers (follower_id, followed_id) VALUES
     (1, 2),

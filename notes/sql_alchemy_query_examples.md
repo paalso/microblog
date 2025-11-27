@@ -1,9 +1,75 @@
->>> db.session.scalar(sa.select(User))
+>>> session = db.session
+
+>>> session.scalar(sa.select(User))
 <User admin>
 
-GET
->>> db.session.get(User, 2)
+Получить по id
+>>> session.get(User, 2)
 <User paalso>
+
+
+Найти по другому полю
+>>> sa.select(User).where(User.username == "admin")
+<sqlalchemy.sql.selectable.Select object at 0x7d22c9927b20>
+
+>>> session.scalar(sa.select(User).where(User.username == "admin"))
+<User admin>
+
+
+Получить всех пользователей
+>>> session.scalars(sa.select(User).order_by(User.id)).all()
+[<User admin>, <User paalso>, <User bob>, <User tom>, <User alice>]
+
+
+Получить только отдельные поля
+>>> session.execute(sa.select(User.username, User.email)).all()
+[('admin', 'admin@example.com'),
+ ('paalso', 'paalso@gmail.com'),
+ ('tom', 'tom@email.net'),
+ ('alice', 'alice@example.com'),
+ ('bob', 'bob@email.net')
+]
+
+>>> session.scalars(sa.select(User.username)).all()
+['admin', 'paalso', 'tom', 'alice', 'bob']
+
+>>> list(session.scalars(sa.select(User.username)))
+['admin', 'paalso', 'tom', 'alice', 'bob']
+
+>>> [e for e in session.scalars(sa.select(User.username))]
+['admin', 'paalso', 'tom', 'alice', 'bob']
+
+>>> [x[0] for x in session.execute(sa.select(User.username))]
+['admin', 'paalso', 'tom', 'alice', 'bob']
+
+[row for row in session.execute(sa.select(User.id, User.username, User.email))]
+[(1, 'admin', 'admin@example.com'),
+ (2, 'paalso', 'paalso@gmail.com'),
+ (4, 'tom', 'tom@email.net'),
+ (5, 'alice', 'alice@example.com'),
+ (3, 'bob', 'bob@email.net')
+]
+
+>>> [dict(row) for row in session.execute(sa.select(User.id, User.username, User.email)).all()]
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "<console>", line 1, in <listcomp>
+TypeError: cannot convert dictionary update sequence element #0 to a sequence
+
+Фильтрация
+>>> session.scalars(sa.select(Post).where(Post.user_id == 2).order_by(Post.id.desc())).all()
+[<Post Reading about window functions in SQL.>, <Post Working on a new SQL project today.>]
+    
+>>> session.scalars(sa.select(User).where(User.email.ilike("%example%"))).all()
+[<User admin>, <User alice>]
+
+
+Агрегации
+>>> session.scalar(sa.select(sa.func.count()).select_from(Post))
+10  # SELECT count(*) FROM posts
+
+
+------------
 
 
 FILTER BY
