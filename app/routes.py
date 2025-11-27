@@ -17,7 +17,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 
 from app import db
 from app.forms import EditProfileForm, LoginForm, RegistrationForm
-from app.models.user import User
+from app.models import Post, User
 
 main_bp = Blueprint('main', __name__)
 
@@ -95,6 +95,17 @@ def users():
 
     users = db.session.query(User).all()
     return render_template('admin/users.html', title='Users', users=users)
+
+
+@main_bp.route('/posts')
+def posts():
+    if current_user.is_anonymous or not current_user.is_admin:
+        flash(
+            "You don't have the necessary permissions to view the posts list.")
+        return redirect(url_for('main.index'))
+
+    posts = db.session.query(Post).all()
+    return render_template('admin/posts.html', title='Posts', posts=posts)
 
 
 @main_bp.route('/user/<username>')
