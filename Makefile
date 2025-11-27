@@ -28,7 +28,7 @@ setup:  ## Initialize dev environment (create instance dir, install deps, migrat
 dev: ## Run in development mode
 	uv run python3 -m flask --app microblog run --debug --port=$(DEBUG_PORT)
 
-run: ## Run in development mode
+run: ## Run
 	uv run python3 -m flask --app microblog run --port=$(PORT)
 
 routes: ## Show routes
