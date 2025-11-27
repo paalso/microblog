@@ -111,7 +111,7 @@ class User(TimestampMixin, UserMixin, db.Model):
                     Post.user_id == self.id
                 )
             )
-            .order_by(Post.updated_at.desc())
+            .order_by(Post.created_at.desc())
         )
         return db.session.scalars(stmt).all()
 
