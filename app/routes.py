@@ -142,3 +142,9 @@ def debug():
     print("current_user:", current_user)
     print("g:", g)
     return "Check your terminal or log!"
+
+
+@main_bp.route('/hello')
+def hello():
+    name = request.args.get('name', 'Paul')
+    return f"<h1>Hello, {name}!</h1>"
