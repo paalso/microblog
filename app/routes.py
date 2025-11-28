@@ -26,16 +26,7 @@ main_bp = Blueprint('main', __name__)
 @main_bp.route('/index')
 @login_required
 def index():
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
+    posts = current_user.following_posts()
     return render_template('index.html', title='Home', posts=posts)
 
 
