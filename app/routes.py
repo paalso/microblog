@@ -16,7 +16,7 @@ from flask import (
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app import db
-from app.forms import EditProfileForm, LoginForm, RegistrationForm
+from app.forms import EditProfileForm, EmptyForm, LoginForm, RegistrationForm
 from app.models import Post, User
 
 main_bp = Blueprint('main', __name__)
@@ -127,11 +127,9 @@ def posts():
 def user(username):
     current_app.logger.debug(f'current_user: {current_user}')
     user = db.first_or_404(sa.select(User).where(User.username == username))
-    if current_user.id == user.id or current_user.is_admin:
-        posts = user.posts
-        return render_template('user.html', user=user, posts=posts)
-    flash(f"You don't have permission to view {username}'s profile.")
-    return redirect(url_for('main.user', username=current_user.username))
+    posts = user.posts
+    form = EmptyForm()
+    return render_template('user.html', user=user, posts=posts, form=form)
 
 
 @main_bp.before_request
@@ -156,6 +154,50 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
+
+
+@main_bp.route('/follow/<username>', methods=['POST'])
+@login_required
+def follow(username):
+    form = EmptyForm()
+
+    if not form.validate_on_submit():
+        return redirect(url_for('main.index'))
+
+    user = db.first_or_404(sa.select(User).where(User.username == username))
+
+    if user == current_user:
+        flash('You cannot follow yourself!')
+    elif current_user.is_following(user):
+        flash(f'You are already following {username}.')
+    else:
+        current_user.follow(user)
+        db.session.commit()
+        flash(f'You are now following {username}!')
+
+    return redirect(url_for('main.user', username=username))
+
+
+@main_bp.route('/unfollow/<username>', methods=['POST'])
+@login_required
+def unfollow(username):
+    form = EmptyForm()
+
+    if not form.validate_on_submit():
+        return redirect(url_for('main.index'))
+
+    user = db.first_or_404(sa.select(User).where(User.username == username))
+
+    if user == current_user:
+        flash('You cannot unfollow yourself!')
+    elif not current_user.is_following(user):
+        flash(f'You are not following {username}.')
+    else:
+        current_user.unfollow(user)
+        db.session.commit()
+        flash(f'You have unfollowed {username}!')
+
+    return redirect(url_for('main.user', username=username))
 
 
 # ------------------------------------------------------------
