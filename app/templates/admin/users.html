@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>User: {{ current_user.username }}</h1>
+  <a href="{{ url_for('main.users', sort='id') }}">Sort by ID</a> |
+  <a href="{{ url_for('main.users', sort='username') }}">Sort by Username</a> |
+  <a href="{{ url_for('main.users', sort='created_at') }}">Sort by Created</a>
   <table>
     <thead>
       <tr>
@@ -20,7 +23,9 @@
           <td>
             <img src="{{ user.avatar(36) }}">
           </td>
-          <td><a href="{{ url_for('main.user', username=user.username) }}">{{ user.username }}</a></td>
+          <td>
+            <a href="{{ url_for('main.user', username=user.username) }}">{{ user.username }}</a>
+          </td>
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
           <td>{{ user.created_at.strftime("%Y %b %d %H:%M") }}</td>

@@ -87,15 +87,27 @@ def register():
 
 
 @main_bp.route('/users')
+@login_required
 def users():
-    current_app.logger.debug(f'current_user: ${current_user}')
-    if current_user.is_anonymous or not current_user.is_admin:
-        flash(
-            "You don't have the necessary permissions to view the user list.")
+    if not current_user.is_admin:
+        flash("You don't have the permissions to view the user list.")
         return redirect(url_for('main.index'))
 
-    users = db.session.query(User).all()
-    return render_template('admin/users.html', title='Users', users=users)
+    sort = request.args.get('sort', 'id')
+
+    # TODO: add desc / reversed sort order
+    sort_map = {
+        'id': User.id,
+        'username': User.username,
+        'created_at': User.created_at
+    }
+
+    sort_column = sort_map.get(sort, User.id)
+
+    stmt = sa.select(User).order_by(sort_column)
+    users = db.session.scalars(stmt).all()
+
+    return render_template('admin/users.html', users=users, sort=sort)
 
 
 @main_bp.route('/posts')
@@ -103,7 +115,7 @@ def posts():
     current_app.logger.debug(f'current_user: ${current_user}')
     if current_user.is_anonymous or not current_user.is_admin:
         flash(
-            "You don't have the necessary permissions to view the posts list.")
+            "You don't have the permissions to view the posts list.")
         return redirect(url_for('main.index'))
 
     posts = db.session.query(Post).all()
@@ -149,17 +161,17 @@ def edit_profile():
 # ------------------------------------------------------------
 @main_bp.route('/debug')
 def debug():
-    print("--- Request context info ---")
-    print("request:", request)
-    print("path:", request.path)
-    print("method:", request.method)
-    print("session:", dict(session))
-    print("current_user:", current_user)
-    print("g:", g)
-    return "Check your terminal or log!"
+    print('--- Request context info ---')
+    print('request:', request)
+    print('path:', request.path)
+    print('method:', request.method)
+    print('session:', dict(session))
+    print('current_user:', current_user)
+    print('g:', g)
+    return 'Check your terminal or log!'
 
 
 @main_bp.route('/hello')
 def hello():
     name = request.args.get('name', 'Paul')
-    return f"<h1>Hello, {name}!</h1>"
+    return f'<h1>Hello, {name}!</h1>'
