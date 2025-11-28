@@ -88,6 +88,7 @@ def register():
 
 @main_bp.route('/users')
 def users():
+    current_app.logger.debug(f'current_user: ${current_user}')
     if current_user.is_anonymous or not current_user.is_admin:
         flash(
             "You don't have the necessary permissions to view the user list.")
@@ -99,6 +100,7 @@ def users():
 
 @main_bp.route('/posts')
 def posts():
+    current_app.logger.debug(f'current_user: ${current_user}')
     if current_user.is_anonymous or not current_user.is_admin:
         flash(
             "You don't have the necessary permissions to view the posts list.")
@@ -111,12 +113,13 @@ def posts():
 @main_bp.route('/user/<username>')
 @login_required
 def user(username):
+    current_app.logger.debug(f'current_user: {current_user}')
     user = db.first_or_404(sa.select(User).where(User.username == username))
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
-    return render_template('user.html', user=user, posts=posts)
+    if current_user.id == user.id or current_user.is_admin:
+        posts = user.posts
+        return render_template('user.html', user=user, posts=posts)
+    flash(f"You don't have permission to view {username}'s profile.")
+    return redirect(url_for('main.user', username=current_user.username))
 
 
 @main_bp.before_request
