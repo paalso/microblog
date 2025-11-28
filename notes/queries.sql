@@ -193,3 +193,66 @@ ORDER BY p.id DESC;
   5 | It’s a sunny day outside, perfect for coding.
   4 | Working on a new SQL project today.
 (4 rows)
+
+--=============================================================================
+--Все посты, на котрые я подписан
+\set user 2
+
+SELECT p.id, p.body, f.followed_id
+FROM posts p
+JOIN followers f ON p.user_id = f.followed_id
+WHERE f.follower_id = :user_id
+ORDER BY p.id DESC;
+ id |                        body                        | followed_id
+----+----------------------------------------------------+-------------
+  9 | Testing unique constraints on posts table.         |           1
+  7 | Just finished writing a Flask view, feeling great. |           4
+  6 | Trying out SQLite foreign keys — looks good!       |           1
+  3 | Hello everyone, this is my first post!             |           1
+(4 rows)
+
+
+
+SELECT p.id, p.body, u.id, f.followed_id
+FROM posts p
+JOIN users u ON p.user_id = u.id
+LEFT JOIN followers f ON p.user_id = f.followed_id
+WHERE f.follower_id = :user_id OR p.user_id = :user_id
+ORDER BY p.created_at DESC;
+ id |                        body                        | id | followed_id
+----+----------------------------------------------------+----+-------------
+  9 | Testing unique constraints on posts table.         |  1 |           1
+  6 | Trying out SQLite foreign keys — looks good!       |  1 |           1
+  7 | Just finished writing a Flask view, feeling great. |  4 |           4
+  8 | Reading about window functions in SQL.             |  2 |           2
+  4 | Working on a new SQL project today.                |  2 |           2
+  3 | Hello everyone, this is my first post!             |  1 |           1
+(6 rows)
+
+
+
+    def following_posts(self):
+        Post = sa.orm.class_mapper(User).registry._class_registry['Post']
+        '''
+        SELECT p.id, p.body, u.id, f.followed_id
+        FROM posts p
+        JOIN users u ON p.user_id = u.id
+        LEFT JOIN followers f ON p.user_id = f.followed_id
+        WHERE f.follower_id = :user_id OR p.user_id = :user_id
+        ORDER BY p.created_at DESC;
+        '''
+        stmt = (
+            sa.select(Post)
+            .join(User, User.id == Post.user_id)
+            .join(followers, followers.c.followed_id == Post.user_id, isouter=True)
+            .where(
+                sa.or_(
+                    followers.c.follower_id == self.id,
+                    Post.user_id == self.id
+                )
+            )
+            .order_by(Post.created_at.desc())
+        )
+
+        return db.session.scalars(stmt).all()
+--=============================================================================

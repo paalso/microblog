@@ -102,17 +102,22 @@ class User(TimestampMixin, UserMixin, db.Model):
     def following_posts(self):
         Post = sa.orm.class_mapper(User).registry._class_registry['Post']
 
+        following_ids = (
+            sa.select(followers.c.followed_id)
+            .where(followers.c.follower_id == self.id)
+        )
+
         stmt = (
             sa.select(Post)
-            .join(followers, followers.c.follower_id == Post.user_id)
             .where(
                 sa.or_(
-                    followers.c.followed_id == self.id,
-                    Post.user_id == self.id
+                    Post.user_id.in_(following_ids),
+                    Post.user_id == self.id,
                 )
             )
             .order_by(Post.created_at.desc())
         )
+
         return db.session.scalars(stmt).all()
 
     # TODO:
