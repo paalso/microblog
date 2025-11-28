@@ -16,18 +16,33 @@ from flask import (
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app import db
-from app.forms import EditProfileForm, EmptyForm, LoginForm, RegistrationForm
+from app.forms import (
+    EditProfileForm,
+    EmptyForm,
+    LoginForm,
+    PostForm,
+    RegistrationForm,
+)
 from app.models import Post, User
 
 main_bp = Blueprint('main', __name__)
 
 
-@main_bp.route('/')
-@main_bp.route('/index')
+@main_bp.route('/', methods=['GET', 'POST'])
+@main_bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        return redirect(url_for('main.index'))
+
     posts = current_user.following_posts()
-    return render_template('index.html', title='Home', posts=posts)
+    return render_template(
+        'index.html', title='Home Page', form=form, posts=posts)
 
 
 @main_bp.route('/login', methods=['GET', 'POST'])
