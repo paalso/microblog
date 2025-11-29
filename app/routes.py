@@ -119,42 +119,6 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@main_bp.route('/users')
-@login_required
-def users():
-    if not current_user.is_admin:
-        flash("You don't have the permissions to view the user list.")
-        return redirect(url_for('main.index'))
-
-    sort = request.args.get('sort', 'id')
-
-    # TODO: add desc / reversed sort order
-    sort_map = {
-        'id': User.id,
-        'username': User.username,
-        'created_at': User.created_at
-    }
-
-    sort_column = sort_map.get(sort, User.id)
-
-    stmt = sa.select(User).order_by(sort_column)
-    users = db.session.scalars(stmt).all()
-
-    return render_template('admin/users.html', users=users, sort=sort)
-
-
-@main_bp.route('/posts')
-def posts():
-    current_app.logger.debug(f'current_user: ${current_user}')
-    if current_user.is_anonymous or not current_user.is_admin:
-        flash(
-            "You don't have the permissions to view the posts list.")
-        return redirect(url_for('main.index'))
-
-    posts = db.session.query(Post).all()
-    return render_template('admin/posts.html', title='Posts', posts=posts)
-
-
 @main_bp.route('/user/<username>')
 @login_required
 def user(username):
@@ -231,6 +195,43 @@ def unfollow(username):
         flash(f'You have unfollowed {username}!')
 
     return redirect(url_for('main.user', username=username))
+
+
+# ---- For admin / debug only ----------------------------------------  
+@main_bp.route('/users')
+@login_required
+def users():
+    if not current_user.is_admin:
+        flash("You don't have the permissions to view the user list.")
+        return redirect(url_for('main.index'))
+
+    sort = request.args.get('sort', 'id')
+
+    # TODO: add desc / reversed sort order
+    sort_map = {
+        'id': User.id,
+        'username': User.username,
+        'created_at': User.created_at
+    }
+
+    sort_column = sort_map.get(sort, User.id)
+
+    stmt = sa.select(User).order_by(sort_column)
+    users = db.session.scalars(stmt).all()
+
+    return render_template('admin/users.html', users=users, sort=sort)
+
+
+@main_bp.route('/posts')
+def posts():
+    current_app.logger.debug(f'current_user: ${current_user}')
+    if current_user.is_anonymous or not current_user.is_admin:
+        flash(
+            "You don't have the permissions to view the posts list.")
+        return redirect(url_for('main.index'))
+
+    posts = db.session.query(Post).all()
+    return render_template('admin/posts.html', title='Posts', posts=posts)
 
 
 # ------------------------------------------------------------
