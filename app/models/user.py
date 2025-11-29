@@ -33,7 +33,7 @@ class User(TimestampMixin, UserMixin, db.Model):
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
 
     posts: so.Mapped[list['Post']] = so.relationship(  # noqa: F821
-        'Post', back_populates='author')
+        'Post', back_populates='author', lazy='dynamic')
 
     role: so.Mapped[str] = so.mapped_column(sa.String(20), default='user')
 
