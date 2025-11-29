@@ -15,7 +15,7 @@ from flask import (
 )
 from flask_login import current_user, login_required, login_user, logout_user
 
-from app import db
+from app import Config, db
 from app.forms import (
     EditProfileForm,
     EmptyForm,
@@ -40,9 +40,36 @@ def index():
         flash('Your post is now live!')
         return redirect(url_for('main.index'))
 
-    posts = current_user.following_posts()
+    page = request.args.get('page', 1, type=int)
+    posts = db.paginate(current_user.following_posts(), page=page,
+                        per_page=Config.POSTS_PER_PAGE, error_out=False)
+    next_url = url_for('main.index', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('main.index', page=posts.prev_num) \
+        if posts.has_prev else None
     return render_template(
-        'index.html', title='Home Page', form=form, posts=posts)
+        'index.html', title='Home', form=form,
+        posts=posts.items, next_url=next_url, prev_url=prev_url
+    )
+
+
+@main_bp.route('/explore')
+@login_required
+def explore():
+    page = request.args.get('page', 1, type=int)
+    query = sa.select(Post).order_by(Post.created_at.desc())
+    posts = db.paginate(query, page=page,
+                        per_page=Config.POSTS_PER_PAGE, error_out=False)
+    next_url = url_for('main.explore', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('main.explore', page=posts.prev_num) \
+        if posts.has_prev else None
+    print(f'next_num, prev_num: {posts.next_num, posts.prev_num}')
+    print(f'next_url, prev_url: {next_url, prev_url}')
+    return render_template(
+        'index.html', title='Explore', posts=posts.items,
+        next_url=next_url, prev_url=prev_url
+    )
 
 
 @main_bp.route('/login', methods=['GET', 'POST'])

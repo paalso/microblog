@@ -107,7 +107,7 @@ class User(TimestampMixin, UserMixin, db.Model):
             .where(followers.c.follower_id == self.id)
         )
 
-        stmt = (
+        query = (
             sa.select(Post)
             .where(
                 sa.or_(
@@ -118,7 +118,7 @@ class User(TimestampMixin, UserMixin, db.Model):
             .order_by(Post.created_at.desc())
         )
 
-        return db.session.scalars(stmt).all()
+        return query
 
     # TODO:
     # mutual_friends() — mutual followers
