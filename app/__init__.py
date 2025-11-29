@@ -6,8 +6,9 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from app.logging_config import configure_logging
 from app.config import Config
+from app.email_logging import configure_email_errors
+from app.logging_config import configure_logging
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -19,6 +20,7 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     configure_logging(app)
+    configure_email_errors(app)
 
     db.init_app(app)
     migrate.init_app(app, db)
