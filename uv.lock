@@ -456,12 +456,12 @@ dependencies = [
     { name = "flask-sqlalchemy" },
     { name = "flask-wtf" },
     { name = "psycopg2-binary" },
-    { name = "pytest" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "djlint" },
+    { name = "pytest" },
     { name = "ruff" },
 ]
 
@@ -475,12 +475,12 @@ requires-dist = [
     { name = "flask-sqlalchemy", specifier = ">=3.1.1" },
     { name = "flask-wtf", specifier = ">=1.2.2" },
     { name = "psycopg2-binary", specifier = ">=2.9.11" },
-    { name = "pytest", specifier = ">=9.0.1" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "djlint", specifier = ">=1.36.4" },
+    { name = "pytest", specifier = ">=9.0.1" },
     { name = "ruff", specifier = ">=0.14.2" },
 ]
 
