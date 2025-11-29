@@ -88,10 +88,10 @@ def test_follow_posts(app):
     db.session.commit()
 
     # now get following posts
-    f1 = u1.following_posts()
-    f2 = u2.following_posts()
-    f3 = u3.following_posts()
-    f4 = u4.following_posts()
+    f1 = db.session.scalars(u1.following_posts()).all()
+    f2 = db.session.scalars(u2.following_posts()).all()
+    f3 = db.session.scalars(u3.following_posts()).all()
+    f4 = db.session.scalars(u4.following_posts()).all()
 
     # verify results
     # import pdb; pdb.set_trace()
@@ -99,8 +99,3 @@ def test_follow_posts(app):
     assert f2 == [p3, p2]
     assert f3 == [p4, p3]
     assert f4 == [p4]
-
-    # assert f1 == [p4, p2]
-    # assert f2 == [p3]
-    # assert f3 == [p4]
-    # assert f4 == []
