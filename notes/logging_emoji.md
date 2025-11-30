@@ -14,7 +14,6 @@
 - [Performance & Monitoring](#performance--monitoring)
 - [Misc Useful Emojis](#misc-useful-emojis)
 - [Example Log Messages](#example-log-messages)
-- [Recommended Usage Patterns](#recommended-usage-patterns)
 
 ---
 
@@ -31,7 +30,7 @@ Example:
 app.logger.info(f"🆕 User created: {user.username}")
 ```
 
-### [CRUD Operations](#crud-operations)
+### CRUD Operations
 
 | Operation | Emoji     | Description                     |
 | --------- | --------- | ------------------------------- |
@@ -41,7 +40,7 @@ app.logger.info(f"🆕 User created: {user.username}")
 | Delete    | 🗑 🗑️‍💥 | Removed object                  |
 | List      | 📋 📜     | Listing items                   |
 
-### [Authentication & Security](#authentication--security)
+### Authentication & Security
 
 | Event             | Emoji  | Description                    |
 | ----------------- | ------ | ------------------------------ |
@@ -53,7 +52,7 @@ app.logger.info(f"🆕 User created: {user.username}")
 | Auth warning      | 🛑 ⚠️  | Suspicious auth behavior       |
 | Security alert    | 🛡️ 🚨 | High-severity event            |
 
-### [Database Events](#database-events)
+### Database Events
 
 | Event                | Emoji | Description         |
 | -------------------- | ----- | ------------------- |
@@ -63,7 +62,7 @@ app.logger.info(f"🆕 User created: {user.username}")
 | Slow query           | 🐌 ⏱  | Query took too long |
 | Connection issue     | 🧯 🚨 | DB errors           |
 
-### [Requests & Routing](#requests--routing)
+### Requests & Routing
 
 | Event           | Emoji        | Description           |
 | --------------- | ------------ | --------------------- |
@@ -75,7 +74,7 @@ app.logger.info(f"🆕 User created: {user.username}")
 | Server error    | 💥 5️⃣0️⃣0️⃣ | Internal failure      |
 
 
-## [System & Application Lifecycle](#system--application-lifecycle)
+### System & Application Lifecycle
 
 | Event              | Emoji | Description          |
 | ------------------ | ----- | -------------------- |
@@ -86,7 +85,7 @@ app.logger.info(f"🆕 User created: {user.username}")
 | Migration executed | 🧱 🔨 | Database migrations  |
 
 
-### [Background Tasks & Workers](#background-tasks--workers)
+### Background Tasks & Workers
 
 | Event          | Emoji | Description           |
 | -------------- | ----- | --------------------- |
@@ -97,7 +96,7 @@ app.logger.info(f"🆕 User created: {user.username}")
 | Retry          | 🔁    | Retrying task         |
 | Task failed    | 💥 🚫 | Job crashed           |
 
-#### [Warnings & Errors](#warnings--errors)
+### Warnings & Errors
 
 | Level    | Emoji    | Description          |
 | -------- | -------- | -------------------- |
@@ -107,7 +106,7 @@ app.logger.info(f"🆕 User created: {user.username}")
 | Error    | ❌ 🚫     | Recoverable error    |
 | Critical | 💥 🔥 🚨 | Severe failure       |
 
-### [Performance & Monitoring](#performance--monitoring)
+### Performance & Monitoring
 
 | Event        | Emoji | Description         |
 | ------------ | ----- | ------------------- |
@@ -119,7 +118,7 @@ app.logger.info(f"🆕 User created: {user.username}")
 | Job timeout  | ⌛ 🛑  | Operation timed out |
 
 
-#### [Misc Useful Emojis](#misc-useful-emojis)
+### Misc Useful Emojis
 
 | Category          | Emoji    | Notes                       |
 | ----------------- | -------- | --------------------------- |
@@ -130,7 +129,7 @@ app.logger.info(f"🆕 User created: {user.username}")
 | UX actions        | 🖱️ 📱   | Client events               |
 | Data processing   | 📊 📈    | Analytics                   |
 
-## [Example Log Messages](#example-log-messages)
+## Example Log Messages
 
 ```python
 app.logger.info(f"🆕 User created: {user.username}")
@@ -151,10 +150,3 @@ app.logger.info(
     f"📥 Request from {request.remote_addr} → {request.path}"
 )
 ```
-
-## [Recommended Usage Patterns](#recommended-usage-patterns)
-
-1. Use emojis sparingly in production logs.
-2. For development, emojis are excellent for highlighting categories.
-3. Use consistent emoji per event type.
-4. Combine emojis with structured log fields (JSON) if using Loki/Grafana.
