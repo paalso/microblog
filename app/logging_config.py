@@ -1,27 +1,18 @@
 import logging
-import os
-from logging.handlers import RotatingFileHandler
+from logging import StreamHandler
 
 
-# TODO: complete
 def configure_logging(app):
-    # if app.debug or app.testing:
-    #     return
+    if any(isinstance(h, StreamHandler) for h in app.logger.handlers):
+        return
 
-    log_dir = os.path.join(app.root_path, '..', 'logs')
-    os.makedirs(log_dir, exist_ok=True)
+    app.logger.setLevel(logging.DEBUG)
 
-    file_handler = RotatingFileHandler(
-        os.path.join(log_dir, 'microblog.log'),
-        maxBytes=10240,
-        backupCount=10,
-        encoding='utf-8'
+    console_handler = StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+
+    formatter = logging.Formatter(
+        '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
     )
-    file_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
-    ))
-    file_handler.setLevel(logging.DEBUG)
-    app.logger.addHandler(file_handler)
-
-    app.logger.setLevel(logging.INFO)
-    app.logger.info('Microblog startup')
+    console_handler.setFormatter(formatter)
+    app.logger.addHandler(console_handler)
