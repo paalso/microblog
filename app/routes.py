@@ -160,7 +160,6 @@ def user(username):
     user = db.first_or_404(sa.select(User).where(User.username == username))
 
     page = request.args.get('page', 1, type=int)
-    current_app.logger.debug(f'📄 Pagination params: page={page}')
 
     query = (
         sa.select(Post)
@@ -170,10 +169,6 @@ def user(username):
 
     posts = db.paginate(
         query, page=page, per_page=Config.POSTS_PER_PAGE, error_out=False
-    )
-
-    current_app.logger.debug(
-        f'🧵 Pagination result: next={posts.next_num}, prev={posts.prev_num}'
     )
 
     next_url = (
