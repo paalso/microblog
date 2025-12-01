@@ -53,6 +53,20 @@ class EditProfileForm(FlaskForm):
     about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
     submit = SubmitField('Submit')
 
+    def __init__(self, original_username, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.original_username = original_username
+
+    def validate_username(self, new_username):
+        if new_username.data != self.original_username:
+            user_with_new_username_already_exists = db.session.scalar(
+                sa.select(
+                    sa.exists().where(User.username == new_username.data)
+                )
+            )
+            if user_with_new_username_already_exists:
+                raise ValidationError('Please use a different username.')
+
 
 class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')

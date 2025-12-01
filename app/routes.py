@@ -202,7 +202,7 @@ def edit_profile():
         f'👤 Edit profile request by: {current_user}'
     )
 
-    form = EditProfileForm()
+    form = EditProfileForm(current_user.username)
 
     if form.validate_on_submit():
         current_app.logger.info(
