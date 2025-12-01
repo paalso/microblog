@@ -37,6 +37,9 @@ def index():
         post = Post(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
+        current_app.logger.info(
+            f'📝 New post created by {current_user.username}: '
+            f'"{post.body[:30]}..."')
         flash('Your post is now live!')
         return redirect(url_for('main.index'))
 
@@ -64,8 +67,7 @@ def explore():
         if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) \
         if posts.has_prev else None
-    print(f'next_num, prev_num: {posts.next_num, posts.prev_num}')
-    print(f'next_url, prev_url: {next_url, prev_url}')
+
     return render_template(
         'index.html', title='Explore', posts=posts.items,
         next_url=next_url, prev_url=prev_url
@@ -74,22 +76,28 @@ def explore():
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    current_app.logger.debug(f'current_user: ${current_user}')
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data))
-        current_app.logger.debug(f'user: ${user}')
 
-        if user is None or not user.check_password(form.password.data):
+        if user is None:
+            current_app.logger.warning(
+                f'❌ Login failed — unknown username "{form.username.data}"')
+            flash('Invalid username or password')
+            return redirect(url_for('main.login'))
+
+        if not user.check_password(form.password.data):
+            current_app.logger.warning(
+                f'🔐 Wrong password attempt for user "{form.username.data}"')
             flash('Invalid username or password')
             return redirect(url_for('main.login'))
 
         login_user(user, remember=form.remember_me.data)
+        current_app.logger.info(f'🔑 Logged in: {user.username}')
 
-        current_app.logger.debug(f'request.args: ${request.args}')
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('main.index')
@@ -99,40 +107,84 @@ def login():
 
 @main_bp.route('/logout')
 def logout():
+    username = current_user.username
     logout_user()
+    current_app.logger.info(f'🚪 User logged out: {username}')
     return redirect(url_for('main.index'))
 
 
 @main_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
+        current_app.logger.info(
+            f'👤 Already authenticated user tried to access /register: '
+            f'{current_user}'
+        )
         return redirect(url_for('main.index'))
+
     form = RegistrationForm()
+
     if form.validate_on_submit():
+        current_app.logger.info(
+            f'📝 Registration attempt: '
+            f'username={form.username.data}, email={form.email.data}'
+        )
+
         user = User(username=form.username.data, email=form.email.data)
-        main_bp.logger.debug(f'user to register: ${user}')
+        current_app.logger.debug(f'🧱 User object created: {user}')
+
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
+
+        current_app.logger.info(
+            f'🎉 New user registered successfully: {user.username}'
+        )
+
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('main.login'))
+
     return render_template('register.html', title='Register', form=form)
 
 
 @main_bp.route('/user/<username>')
 @login_required
 def user(username):
-    current_app.logger.debug(f'current_user: {current_user}')
+    current_app.logger.debug(
+        f'👤 Current user accessing profile: {current_user}'
+    )
+    current_app.logger.info(
+        f'🔎 Profile request for username="{username}"'
+    )
+
     user = db.first_or_404(sa.select(User).where(User.username == username))
+
     page = request.args.get('page', 1, type=int)
-    query = (sa.select(Post)
-             .where(Post.user_id == user.id).order_by(Post.created_at.desc()))
+    current_app.logger.debug(f'📄 Pagination params: page={page}')
+
+    query = (
+        sa.select(Post)
+        .where(Post.user_id == user.id)
+        .order_by(Post.created_at.desc())
+    )
+
     posts = db.paginate(
-        query, page=page, per_page=Config.POSTS_PER_PAGE, error_out=False)
-    next_url = url_for('user', username=user.username, page=posts.next_num) \
+        query, page=page, per_page=Config.POSTS_PER_PAGE, error_out=False
+    )
+
+    current_app.logger.debug(
+        f'🧵 Pagination result: next={posts.next_num}, prev={posts.prev_num}'
+    )
+
+    next_url = (
+        url_for('user', username=user.username, page=posts.next_num)
         if posts.has_next else None
-    prev_url = url_for('user', username=user.username, page=posts.prev_num) \
+    )
+    prev_url = (
+        url_for('user', username=user.username, page=posts.prev_num)
         if posts.has_prev else None
+    )
+
     form = EmptyForm()
     return render_template('user.html', user=user, posts=posts.items,
                            next_url=next_url, prev_url=prev_url, form=form)
@@ -141,6 +193,9 @@ def user(username):
 @main_bp.before_request
 def before_request():
     if current_user.is_authenticated:
+        current_app.logger.debug(
+            f'⏱️ Updating last_seen for {current_user}'
+        )
         current_user.last_seen = datetime.now(timezone.utc)
         db.session.commit()
 
@@ -148,37 +203,73 @@ def before_request():
 @main_bp.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
+    current_app.logger.debug(
+        f'👤 Edit profile request by: {current_user}'
+    )
+
     form = EditProfileForm()
+
     if form.validate_on_submit():
+        current_app.logger.info(
+            f'📝 Profile update submitted: username={form.username.data}'
+        )
+
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
+
+        current_app.logger.info(
+            f'✅ Profile updated successfully for user={current_user.username}'
+        )
+
         flash('Your changes have been saved.')
         return redirect(url_for('main.edit_profile'))
+
     elif request.method == 'GET':
+        current_app.logger.debug(
+            f'📄 Pre-filling edit form for user={current_user.username}'
+        )
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title='Edit Profile',
-                           form=form)
+
+    return render_template(
+        'edit_profile.html', title='Edit Profile', form=form
+    )
 
 
 @main_bp.route('/follow/<username>', methods=['POST'])
 @login_required
 def follow(username):
+    current_app.logger.debug(
+        f'👥 Follow attempt: '
+        f'current_user={current_user.username}, target={username}'
+    )
+
     form = EmptyForm()
 
     if not form.validate_on_submit():
+        current_app.logger.warning('⚠️ Invalid follow form submission')
         return redirect(url_for('main.index'))
 
     user = db.first_or_404(sa.select(User).where(User.username == username))
+    current_app.logger.debug(f'🔎 Follow target resolved: {user}')
 
     if user == current_user:
+        current_app.logger.warning('⚠️ User tried to follow themselves')
         flash('You cannot follow yourself!')
+
     elif current_user.is_following(user):
+        current_app.logger.info(
+            f'ℹ️ Already following: {current_user.username} → {username}'
+        )
         flash(f'You are already following {username}.')
+
     else:
         current_user.follow(user)
         db.session.commit()
+        current_app.logger.info(
+            f'➕ New follow: {current_user.username} → {username}'
+        )
         flash(f'You are now following {username}!')
 
     return redirect(url_for('main.user', username=username))
@@ -187,20 +278,36 @@ def follow(username):
 @main_bp.route('/unfollow/<username>', methods=['POST'])
 @login_required
 def unfollow(username):
+    current_app.logger.debug(
+        f'👥 Unfollow attempt: '
+        f'current_user={current_user.username}, target={username}'
+    )
+
     form = EmptyForm()
 
     if not form.validate_on_submit():
+        current_app.logger.warning('⚠️ Invalid unfollow form submission')
         return redirect(url_for('main.index'))
 
     user = db.first_or_404(sa.select(User).where(User.username == username))
+    current_app.logger.debug(f'🔎 Unfollow target resolved: {user}')
 
     if user == current_user:
+        current_app.logger.warning('⚠️ User tried to unfollow themselves')
         flash('You cannot unfollow yourself!')
+
     elif not current_user.is_following(user):
+        current_app.logger.info(
+            f'ℹ️ Attempt to unfollow non-followed user: {username}'
+        )
         flash(f'You are not following {username}.')
+
     else:
         current_user.unfollow(user)
         db.session.commit()
+        current_app.logger.info(
+            f'➖ Unfollow: {current_user.username} → {username}'
+        )
         flash(f'You have unfollowed {username}!')
 
     return redirect(url_for('main.user', username=username))
