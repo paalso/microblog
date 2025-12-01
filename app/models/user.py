@@ -74,14 +74,6 @@ class User(TimestampMixin, UserMixin, db.Model):
     def is_admin(self):
         return self.role == 'admin'
 
-    def check_new_username(self, new_username):
-        stmt = sa.select(
-            sa.exists().where(User.username == new_username)
-        )
-        user_with_new_username_exists = db.session.scalar(stmt)
-        return not user_with_new_username_exists or \
-               new_username == self.username
-
     def follow(self, user):
         self.following.add(user)
 
