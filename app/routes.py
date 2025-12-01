@@ -209,6 +209,16 @@ def edit_profile():
             f'📝 Profile update submitted: username={form.username.data}'
         )
 
+        new_username = form.username.data
+
+        if not current_user.check_new_username(new_username):
+            current_app.logger.info(
+                f'🚫 Username {new_username} is not allowed '
+                f'for user={current_user.username}'
+            )
+            flash(f'Username {new_username} is not allowed for you')
+            return redirect(url_for('main.edit_profile'))
+
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
@@ -218,7 +228,8 @@ def edit_profile():
         )
 
         flash('Your changes have been saved.')
-        return redirect(url_for('main.edit_profile'))
+
+        return redirect(url_for('main.user', username=new_username))
 
     elif request.method == 'GET':
         current_app.logger.debug(
