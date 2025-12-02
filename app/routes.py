@@ -218,7 +218,7 @@ def edit_profile():
         )
 
         flash('Your changes have been saved.')
-        return redirect(url_for('main.edit_profile'))
+        return redirect(url_for('main.user', username=current_user.username))
 
     elif request.method == 'GET':
         current_app.logger.debug(
