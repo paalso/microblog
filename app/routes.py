@@ -51,7 +51,7 @@ def index():
     prev_url = url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
     return render_template(
-        'index.html', title='Home', form=form,
+        'pages/index.html', title='Home', form=form,
         posts=posts.items, next_url=next_url, prev_url=prev_url
     )
 
@@ -69,7 +69,7 @@ def explore():
         if posts.has_prev else None
 
     return render_template(
-        'index.html', title='Explore', posts=posts.items,
+        'pages/index.html', title='Explore', posts=posts.items,
         next_url=next_url, prev_url=prev_url
     )
 
@@ -102,7 +102,7 @@ def login():
         if not next_page or urlsplit(next_page).netloc != '':
             next_page = url_for('main.index')
         return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('pages/login.html', title='Sign In', form=form)
 
 
 @main_bp.route('/logout')
@@ -144,7 +144,7 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('main.login'))
 
-    return render_template('register.html', title='Register', form=form)
+    return render_template('pages/register.html', title='Register', form=form)
 
 
 @main_bp.route('/user/<username>')
@@ -181,7 +181,7 @@ def user(username):
     )
 
     form = EmptyForm()
-    return render_template('user.html', user=user, posts=posts.items,
+    return render_template('pages/user.html', user=user, posts=posts.items,
                            next_url=next_url, prev_url=prev_url, form=form)
 
 
@@ -228,7 +228,7 @@ def edit_profile():
         form.about_me.data = current_user.about_me
 
     return render_template(
-        'edit_profile.html', title='Edit Profile', form=form
+        'pages/edit_profile.html', title='Edit Profile', form=form
     )
 
 

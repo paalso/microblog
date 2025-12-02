@@ -1,0 +1,17 @@
+templates
+- email
+- - reset_password.html
+- - reset_password.txt
+- 404.html
+- 500.html
+- _post.html
+- base.html
+- bootstrap_wtf.html
+- edit_profile.html
+- index.html
+- login.html
+- register.html
+- reset_password.html
+- reset_password_request.html
+- user.html
+
