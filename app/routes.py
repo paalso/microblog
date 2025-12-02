@@ -22,9 +22,10 @@ from app.forms import (
     LoginForm,
     PostForm,
     RegistrationForm,
+    ResetPasswordRequestForm,
 )
 from app.models import Post, User
-from app.utils.email import send_email
+from app.utils.email import send_email, send_password_reset_email
 
 main_bp = Blueprint('main', __name__)
 
@@ -112,6 +113,22 @@ def logout():
     logout_user()
     current_app.logger.info(f'🚪 User logged out: {username}')
     return redirect(url_for('main.index'))
+
+
+@main_bp.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(
+            sa.select(User).where(User.email == form.email.data))
+        if user:
+            send_password_reset_email(user)
+        flash('Check your email for the instructions to reset your password')
+        return redirect(url_for('login'))
+    return render_template('pages/reset_password_request.html',
+                           title='Reset Password', form=form)
 
 
 @main_bp.route('/register', methods=['GET', 'POST'])
