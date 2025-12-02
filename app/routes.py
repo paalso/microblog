@@ -24,6 +24,7 @@ from app.forms import (
     RegistrationForm,
 )
 from app.models import Post, User
+from app.utils.email import send_email
 
 main_bp = Blueprint('main', __name__)
 
@@ -362,3 +363,18 @@ def debug():
 def hello():
     name = request.args.get('name', 'Paul')
     return f'<h1>Hello, {name}!</h1>'
+
+
+@main_bp.route('/test_send_email')
+def test_send_email():
+    message = request.args.get('message')
+    if not message:
+        return 'No message: nothing to email'
+
+    subject = 'Test email from Microblog'
+    sender = Config.ADMINS[0]
+    recipients = [sender]
+    text_body = message
+    send_email(subject, sender, recipients, text_body)
+
+    return 'Sending email. See logs for details...'
