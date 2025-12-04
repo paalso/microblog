@@ -118,7 +118,9 @@ def logout():
 @main_bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        current_app.logger.debug(f'⚠️ User {current_user.username} '
+                                f'is already authenticated. No need to log in.')
+        return redirect(url_for('main.index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
         user = db.session.scalar(
@@ -388,7 +390,8 @@ def test_send_email():
     if not message:
         return 'No message: nothing to email'
 
-    subject = 'Test email from Microblog'
+    message_prefix = message if len(message) < 10 else f'{message[:7]}...'
+    subject = f'Test email from Microblog: {message_prefix}'
     sender = Config.ADMINS[0]
     recipients = [sender]
     text_body = message

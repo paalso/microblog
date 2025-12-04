@@ -1,17 +1,2 @@
-templates
-- email
-- - reset_password.html
-- - reset_password.txt
-- 404.html
-- 500.html
-- _post.html
-- base.html
-- bootstrap_wtf.html
-- edit_profile.html
-- index.html
-- login.html
-- register.html
-- reset_password.html
-- reset_password_request.html
-- user.html
+{'DEBUG': False, 'TESTING': False, 'PROPAGATE_EXCEPTIONS': None, 'SECRET_KEY': 'your-secret-key', 'SECRET_KEY_FALLBACKS': None, 'PERMANENT_SESSION_LIFETIME': datetime.timedelta(days=31), 'USE_X_SENDFILE': False, 'TRUSTED_HOSTS': None, 'SERVER_NAME': None, 'APPLICATION_ROOT': '/', 'SESSION_COOKIE_NAME': 'session', 'SESSION_COOKIE_DOMAIN': None, 'SESSION_COOKIE_PATH': None, 'SESSION_COOKIE_HTTPONLY': True, 'SESSION_COOKIE_SECURE': False, 'SESSION_COOKIE_PARTITIONED': False, 'SESSION_COOKIE_SAMESITE': None, 'SESSION_REFRESH_EACH_REQUEST': True, 'MAX_CONTENT_LENGTH': None, 'MAX_FORM_MEMORY_SIZE': 500000, 'MAX_FORM_PARTS': 1000, 'SEND_FILE_MAX_AGE_DEFAULT': None, 'TRAP_BAD_REQUEST_ERRORS': None, 'TRAP_HTTP_EXCEPTIONS': False, 'EXPLAIN_TEMPLATE_LOADING': False, 'PREFERRED_URL_SCHEME': 'http', 'TEMPLATES_AUTO_RELOAD': None, 'MAX_COOKIE_SIZE': 4093, 'PROVIDE_AUTOMATIC_OPTIONS': True, 'ADMINS': ['paalso@gmail.com'], 'MAIL_PASSWORD': 'efpbuyhmkxzepybk', 'MAIL_PORT': 587, 'MAIL_SERVER': 'smtp.gmail.com', 'MAIL_USERNAME': '40a.pvl@gmail.com', 'MAIL_USE_TLS': True, 'POSTS_PER_PAGE': 20, 'SQLALCHEMY_DATABASE_URI': 'postgresql://paalso:parol111@localhost:5432/microblog_db', 'SQLALCHEMY_TRACK_MODIFICATIONS': 'false', 'SQLALCHEMY_ENGINE_OPTIONS': {}, 'SQLALCHEMY_ECHO': False, 'SQLALCHEMY_BINDS': {}, 'SQLALCHEMY_RECORD_QUERIES': False}
 
