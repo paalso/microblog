@@ -225,9 +225,9 @@ def user(username):
 @main_bp.before_request
 def before_request():
     if current_user.is_authenticated:
-        current_app.logger.debug(
-            f'⏱️ Updating last_seen for {current_user}'
-        )
+        # current_app.logger.debug(
+        #     f'⏱️ Updating last_seen for {current_user}'
+        # )
         current_user.last_seen = datetime.now(timezone.utc)
         db.session.commit()
 
