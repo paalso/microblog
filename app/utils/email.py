@@ -1,26 +1,30 @@
+from threading import Thread
+
 from flask import current_app, render_template
 from flask_mail import Message
 
 from app import mail
 
 
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
+
 def send_email(subject, sender, recipients, text_body, html_body=None):
     """Send an email using Flask-Mail."""
-    msg = Message(
-        subject,
-        sender=sender,
-        recipients=recipients
-    )
+    msg = Message(subject, sender=sender, recipients=recipients)
     msg.body = text_body
-
     if html_body:
         msg.html = html_body
 
-    try:
-        mail.send(msg)
-        current_app.logger.info(f"📧 Email sent to {recipients}: {subject}")
-    except Exception as e:
-        current_app.logger.error(f"❌ Failed to send email: {e}")
+    app = current_app._get_current_object()
+
+    Thread(target=send_async_email, args=(app, msg)).start()
+
+    current_app.logger.info(
+        f"📨 Email queued for async sending to {recipients}: {subject}"
+    )
 
 
 def send_password_reset_email(user):
