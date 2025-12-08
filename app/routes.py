@@ -118,36 +118,81 @@ def logout():
 
 @main_bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
+    current_app.logger.debug(
+        f'➡️ Enter reset_password_request ({request.method})')
+
     if current_user.is_authenticated:
-        current_app.logger.debug(f'⚠️ User {current_user.username} '
-                                f'is already authenticated. No need to log in.')
+        current_app.logger.debug(
+            f'⚠️ User {current_user.username} is already authenticated. '
+            f'Redirecting to index.')
         return redirect(url_for('main.index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
+        current_app.logger.debug(
+            f'📩 Form submitted with email="{form.email.data}"')
+
         user = db.session.scalar(
             sa.select(User).where(User.email == form.email.data))
         if user:
+            current_app.logger.debug(
+                f'✅ User found: id={user.id}, username={user.username}. '
+                f'Sending reset email...')
             send_password_reset_email(user)
+        else:
+            current_app.logger.debug(
+                f'❌ No user with email "{form.email.data}"')
+
         flash('Check your email for the instructions to reset your password')
+        current_app.logger.debug(
+            '➡️ Redirecting to login after request processing')
         return redirect(url_for('main.login'))
+
+    current_app.logger.debug(
+        '🖼 Rendering reset_password_request form')
     return render_template('pages/reset_password_request.html',
                            title='Reset Password', form=form)
 
 
 @main_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    current_app.logger.debug(
+        f'➡️ Enter reset_password with token="{token[:25]}...". '
+        f'Method: {request.method}')
+
     if current_user.is_authenticated:
+        current_app.logger.debug(
+            f'⚠️ User {current_user.username} is already authenticated. '
+            f'Redirecting to index.')
         return redirect(url_for('main.index'))
     user = User.verify_reset_password_token(token)
     if not user:
+        current_app.logger.debug(
+            '❌ Invalid or expired token. Redirecting to index.')
         return redirect(url_for('main.index'))
+
+    current_app.logger.debug(
+        f'✅ Token valid. Resetting password for '
+        f'user id={user.id}, username={user.username}')
+
     form = ResetPasswordForm()
+
     if form.validate_on_submit():
+        current_app.logger.debug(
+            f'🔐 Form submitted for password reset. '
+            f'New password length={len(form.password.data)}')
+
         user.set_password(form.password.data)
         db.session.commit()
+
+        current_app.logger.debug(
+            f'💾 Password updated in DB for user id={user.id}')
         flash('Your password has been reset.')
+        current_app.logger.debug('➡️ Redirecting to login after success')
         return redirect(url_for('main.login'))
-    return render_template('email/reset_password.html', form=form)
+
+    current_app.logger.debug('🖼 Rendering password reset form')
+    return render_template('pages/reset_password.html', form=form)
+    return render_template('pages/index.html')
 
 
 @main_bp.route('/register', methods=['GET', 'POST'])

@@ -10,7 +10,7 @@ from flask import current_app
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app import config, db, login
+from app import db, login
 from app.models.mixins import TimestampMixin
 
 followers = sa.Table(
@@ -136,10 +136,14 @@ class User(TimestampMixin, UserMixin, db.Model):
     def verify_reset_password_token(token):
         try:
             id = jwt.decode(
-                token, config['SECRET_KEY'],
+                token,
+                current_app.config['SECRET_KEY'],
                 algorithms=['HS256']
             )['reset_password']
+            current_app.logger.debug('🔐👤 User succesfully identified')
         except Exception:
+            current_app.logger.debug(
+                '⚠️ Token invalid or expired. User not fount')
             return
         return db.session.get(User, id)
 
