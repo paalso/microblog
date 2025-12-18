@@ -19,7 +19,7 @@
             <form action="{{ url_for('main.follow', username=user.username) }}"
                   method="post">
               {{ form.hidden_tag() }}
-              {{ form.submit(value='Follow') }}
+              {{ form.submit(value='Follow', class_='btn btn-primary') }}
             </form>
           </p>
         {% else %}
@@ -27,7 +27,7 @@
             <form action="{{ url_for('main.unfollow', username=user.username) }}"
                   method="post">
               {{ form.hidden_tag() }}
-              {{ form.submit(value='Unfollow') }}
+              {{ form.submit(value='Unfollow', class_='btn btn-primary') }}
             </form>
           </p>
         {% endif %}
