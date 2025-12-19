@@ -43,7 +43,9 @@ class User(TimestampMixin, UserMixin, db.Model):
     about_me: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
 
     last_seen: so.Mapped[Optional[datetime]] = so.mapped_column(
-        default=lambda: datetime.now(timezone.utc))
+        sa.DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc)
+    )
 
     # User.following = users I follow
     following: so.Mapped[set['User']] = so.relationship(
