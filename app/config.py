@@ -4,6 +4,8 @@ basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 
 class Config:
+    LANGUAGES = ['ru', 'en']
+
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     SQLALCHEMY_TRACK_MODIFICATIONS = (
         os.environ.get('SQLALCHEMY_TRACK_MODIFICATIONS', False))

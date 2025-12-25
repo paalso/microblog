@@ -4,9 +4,11 @@ from urllib.parse import urlsplit
 import sqlalchemy as sa
 from flask import (
     Blueprint,
+    abort,
     current_app,
     flash,
     g,
+    make_response,
     redirect,
     render_template,
     request,
@@ -457,3 +459,17 @@ def test_send_email():
     send_email(subject, sender, recipients, text_body)
 
     return 'Sending email. See logs for details...'
+
+
+@main_bp.route('/lang/<lang>')
+def set_language(lang):
+    current_app.logger.debug(f'ℹ️ LANGUAGES: {current_app.config["LANGUAGES"]}')
+
+    if lang not in current_app.config['LANGUAGES']:
+        abort(404)
+
+    response = (
+        make_response(redirect(request.referrer or url_for('main.index'))))
+    response.set_cookie('lang', lang, max_age=60 * 60 * 24 * 365)
+    current_app.logger.debug(f'🌍 Language forced via cookie: {lang}')
+    return response

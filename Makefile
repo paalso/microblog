@@ -86,6 +86,7 @@ db-shell: ## Open SQLite shell
 
 sqlite: ## Open SQLite shell
 	@make db-shell
+
 # ---------------------------------------------------------------------
 # 🧪 Tests and Lint
 # ---------------------------------------------------------------------
@@ -123,3 +124,14 @@ qa:  ## Run all quality checks (lint + tests)
 fix:  ## Fix and format everything
 	@$(MAKE) lint-fix
 	@$(MAKE) format
+
+# ---------------------------------------------------------------------
+# 🌍 i18n localisation
+# ---------------------------------------------------------------------
+
+compilemessages:  ## Update and compile translations
+	@uv run pybabel compile -d app/translations
+
+makemessages:  ## Initialize translations (run once)
+	uv run pybabel extract -F babel.cfg -k _l -o messages.pot .
+	uv run pybabel update -i messages.pot -d app/translations
