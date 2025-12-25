@@ -2,8 +2,8 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 
 from flask import current_app, request, Flask
-from flask_babel import Babel
-from flask_login import current_user, LoginManager
+from flask_babel import Babel, lazy_gettext as _l
+from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_moment import Moment
@@ -16,6 +16,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
 login.login_view = 'main.login'
+login.login_message = _l('Please log in to access this page.')
 
 mail = Mail()
 moment = Moment()

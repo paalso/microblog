@@ -15,17 +15,20 @@ from flask import (
     session,
     url_for,
 )
+from flask_babel import _
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app import Config, db
 from app.forms import (
     EditProfileForm,
     EmptyForm,
+    # FollowForm,
     LoginForm,
     PostForm,
     RegistrationForm,
     ResetPasswordForm,
     ResetPasswordRequestForm,
+    # UnfollowForm,
 )
 from app.models import Post, User
 from app.utils.email import send_email, send_password_reset_email
@@ -45,7 +48,7 @@ def index():
         current_app.logger.info(
             f'📝 New post created by {current_user.username}: '
             f'"{post.body[:30]}..."')
-        flash('Your post is now live!')
+        flash(_('Your post is now live!'))
         return redirect(url_for('main.index'))
 
     page = request.args.get('page', 1, type=int)
@@ -91,13 +94,13 @@ def login():
         if user is None:
             current_app.logger.warning(
                 f'❌ Login failed — unknown username "{form.username.data}"')
-            flash('Invalid username or password')
+            flash(_('Invalid username or password'))
             return redirect(url_for('main.login'))
 
         if not user.check_password(form.password.data):
             current_app.logger.warning(
                 f'🔐 Wrong password attempt for user "{form.username.data}"')
-            flash('Invalid username or password')
+            flash(_('Invalid username or password'))
             return redirect(url_for('main.login'))
 
         login_user(user, remember=form.remember_me.data)
@@ -144,7 +147,7 @@ def reset_password_request():
             current_app.logger.debug(
                 f'❌ No user with email "{form.email.data}"')
 
-        flash('Check your email for the instructions to reset your password')
+        flash(_('Check your email for the instructions to reset your password'))
         current_app.logger.debug(
             '➡️ Redirecting to login after request processing')
         return redirect(url_for('main.login'))
@@ -188,7 +191,7 @@ def reset_password(token):
 
         current_app.logger.debug(
             f'💾 Password updated in DB for user id={user.id}')
-        flash('Your password has been reset.')
+        flash(_('Your password has been reset.'))
         current_app.logger.debug('➡️ Redirecting to login after success')
         return redirect(url_for('main.login'))
 
@@ -225,7 +228,7 @@ def register():
             f'🎉 New user registered successfully: {user.username}'
         )
 
-        flash('Congratulations, you are now a registered user!')
+        flash(_('Congratulations, you are now a registered user!'))
         return redirect(url_for('main.login'))
 
     return render_template('pages/register.html', title='Register', form=form)
@@ -265,6 +268,9 @@ def user(username):
     )
 
     form = EmptyForm()
+    button_label = 'Unfollow' if current_user.is_following(user) else 'Follow'
+    form.set_label(_(button_label))
+
     return render_template('pages/user.html', user=user, posts=posts.items,
                            next_url=next_url, prev_url=prev_url, form=form)
 
@@ -298,7 +304,7 @@ def edit_profile():
             f'✅ Profile updated successfully for user={current_user.username}'
         )
 
-        flash('Your changes have been saved.')
+        flash(_('Your changes have been saved.'))
         return redirect(url_for('main.user', username=current_user.username))
 
     elif request.method == 'GET':
@@ -332,21 +338,20 @@ def follow(username):
 
     if user == current_user:
         current_app.logger.warning('⚠️ User tried to follow themselves')
-        flash('You cannot follow yourself!')
+        flash(_('You cannot follow yourself!'))
 
     elif current_user.is_following(user):
         current_app.logger.info(
             f'ℹ️ Already following: {current_user.username} → {username}'
         )
-        flash(f'You are already following {username}.')
-
+        flash(_('You are already following %(username)s.', username=username))
     else:
         current_user.follow(user)
         db.session.commit()
         current_app.logger.info(
             f'➕ New follow: {current_user.username} → {username}'
         )
-        flash(f'You are now following {username}!')
+        flash(_('You are now following %(username)s!', username=username))
 
     return redirect(url_for('main.user', username=username))
 
@@ -370,13 +375,13 @@ def unfollow(username):
 
     if user == current_user:
         current_app.logger.warning('⚠️ User tried to unfollow themselves')
-        flash('You cannot unfollow yourself!')
+        flash(_('You cannot unfollow yourself!'))
 
     elif not current_user.is_following(user):
         current_app.logger.info(
             f'ℹ️ Attempt to unfollow non-followed user: {username}'
         )
-        flash(f'You are not following {username}.')
+        flash(_('You are not following %(username)s.', username=username))
 
     else:
         current_user.unfollow(user)
@@ -384,7 +389,7 @@ def unfollow(username):
         current_app.logger.info(
             f'➖ Unfollow: {current_user.username} → {username}'
         )
-        flash(f'You have unfollowed {username}!')
+        flash(_('You have unfollowed %(username)s!', username=username))
 
     return redirect(url_for('main.user', username=username))
 
@@ -394,7 +399,7 @@ def unfollow(username):
 @login_required
 def users():
     if not current_user.is_admin:
-        flash("You don't have the permissions to view the user list.")
+        flash(_("You don't have the permissions to view the user list."))
         return redirect(url_for('main.index'))
 
     sort = request.args.get('sort', 'id')
@@ -419,7 +424,7 @@ def posts():
     current_app.logger.debug(f'current_user: ${current_user}')
     if current_user.is_anonymous or not current_user.is_admin:
         flash(
-            "You don't have the permissions to view the posts list.")
+            _("You don't have the permissions to view the posts list."))
         return redirect(url_for('main.index'))
 
     posts = db.session.query(Post).all()
