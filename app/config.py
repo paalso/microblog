@@ -1,9 +1,11 @@
 import os
+from distutils.util import strtobool
 
 basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 
 class Config:
+    DEVELOPMENT = bool(strtobool(os.environ.get('DEVELOPMENT', 'false')))
     LANGUAGES = ['ru', 'en']
 
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'

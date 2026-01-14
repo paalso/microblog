@@ -41,32 +41,32 @@ shell: ## Launch Flask shell
 # 🗃️ Database Management
 # ---------------------------------------------------------------------
 db-init:  ## Initialize migrations directory
-	@uv run flask db init
+	uv run flask db init
 
 db-migrate:  ## Generate new migration (usage: make db-migrate m="Message")
-	@uv run flask db migrate -m "$(m)"
+	uv run flask db migrate -m "$(m)"
 
 db-upgrade:  ## Apply all migrations
-	@uv run flask db upgrade
+	uv run flask db upgrade
 
 db-downgrade:  ## Revert last migration
-	@uv run flask db downgrade
+	uv run flask db downgrade
 
 db-history:  ## Show migration history
-	@uv run flask db history
+	uv run flask db history
 
 db-current:  ## Show current migration version
-	@uv run flask db current
+	uv run flask db current
 
 db-heads:  ## Show head revisions (latest migrations)
-	@uv run flask db heads
+	uv run flask db heads
 
 db-show:  ## Show details of a specific revision (usage: make db-show r=<rev>)
-	@uv run flask db show $(r)
+	uv run flask db show $(r)
 
 db-reset:  ## Drop and recreate the database schema (dangerous!)
-	@uv run flask db downgrade base
-	@uv run flask db upgrade
+	uv run flask db downgrade base
+	uv run flask db upgrade
 
 db-tables: ## Show SQLite DB table list
 	@sqlite3 $(DB_PATH) ".tables"
@@ -79,6 +79,9 @@ db-status:  ## Show current DB revision and pending migrations
 
 db-schema: ## Show SQLite DB table schema
 	@sqlite3 $(DB_PATH) ".schema"
+
+db-check: ## Check the current state DB models matches the applied migration scripts
+    uv run flask db check
 
 db-shell: ## Open SQLite shell
 	@echo "Opening SQLite shell for $(DB_PATH)..."

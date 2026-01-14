@@ -14,6 +14,9 @@ from app.i18n import get_locale
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    if development_mode := app.config['DEVELOPMENT']:
+        print(f'DEVELOPMENT: {development_mode}, '
+              f'DB URI = {app.config["SQLALCHEMY_DATABASE_URI"]}')
 
     init_logging(app)
 
