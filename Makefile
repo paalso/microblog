@@ -81,7 +81,7 @@ db-schema: ## Show SQLite DB table schema
 	@sqlite3 $(DB_PATH) ".schema"
 
 db-check: ## Check the current state DB models matches the applied migration scripts
-    uv run flask db check
+	uv run flask db check
 
 db-shell: ## Open SQLite shell
 	@echo "Opening SQLite shell for $(DB_PATH)..."
