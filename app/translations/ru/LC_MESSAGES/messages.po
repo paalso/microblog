@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-12-26 18:57+0200\n"
+"POT-Creation-Date: 2026-02-17 19:43+0200\n"
 "PO-Revision-Date: 2025-12-25 16:07+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: app/__init__.py:19
+#: app/__init__.py:39
 msgid "Please log in to access this page."
 msgstr "Пожалуйста залогиньтесь чтобы получить доступ к этой странице"
 
@@ -83,63 +83,63 @@ msgstr "Отменить подписку"
 msgid "Say something"
 msgstr "Напишите что-нибудь"
 
-#: app/routes.py:51
+#: app/routes.py:57
 msgid "Your post is now live!"
 msgstr "Ваш пост опубликован!"
 
-#: app/routes.py:97 app/routes.py:103
+#: app/routes.py:103 app/routes.py:109
 msgid "Invalid username or password"
 msgstr "Неверное имя пользователя или пароль"
 
-#: app/routes.py:150
+#: app/routes.py:156
 msgid "Check your email for the instructions to reset your password"
 msgstr "Проверьте электронную почту — мы отправили инструкции по сбросу пароля"
 
-#: app/routes.py:194
+#: app/routes.py:200
 msgid "Your password has been reset."
 msgstr "Ваш пароль был сброшен."
 
-#: app/routes.py:231
+#: app/routes.py:237
 msgid "Congratulations, you are now a registered user!"
 msgstr "Поздравляем, вы успешно зарегистрировались!"
 
-#: app/routes.py:307
+#: app/routes.py:313
 msgid "Your changes have been saved."
 msgstr "Изменения сохранены."
 
-#: app/routes.py:341
+#: app/routes.py:347
 msgid "You cannot follow yourself!"
 msgstr "Вы не можете подписаться на себя."
 
-#: app/routes.py:347
+#: app/routes.py:353
 #, python-format
 msgid "You are already following %(username)s."
 msgstr "Вы уже подписаны на %(username)."
 
-#: app/routes.py:354
+#: app/routes.py:360
 #, python-format
 msgid "You are now following %(username)s!"
 msgstr "Теперь вы подписаны на %(username)s!"
 
-#: app/routes.py:378
+#: app/routes.py:384
 msgid "You cannot unfollow yourself!"
 msgstr "Вы не можете отписаться от себя."
 
-#: app/routes.py:384
+#: app/routes.py:390
 #, python-format
 msgid "You are not following %(username)s."
 msgstr "Вы не подписаны на %(username)s."
 
-#: app/routes.py:392
+#: app/routes.py:398
 #, python-format
 msgid "You have unfollowed %(username)s!"
 msgstr "Вы отписались от %(username)s!"
 
-#: app/routes.py:402
+#: app/routes.py:408
 msgid "You don't have the permissions to view the user list."
 msgstr "У вас нет прав для просмотра списка пользователей."
 
-#: app/routes.py:427
+#: app/routes.py:433
 msgid "You don't have the permissions to view the posts list."
 msgstr "У вас нет прав для просмотра списка публикаций."
 
@@ -211,3 +211,6 @@ msgstr "Редактировать профиль"
 msgid "says"
 msgstr "пишет"
 
+#: app/templates/partials/_post.html:15
+msgid "Translate"
+msgstr "Перевести"

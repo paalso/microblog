@@ -1,6 +1,8 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as so
-from flask import Flask
+from flask import Flask, g
+from flask_babel import get_locale as babel_get_locale
+
 from flask_babel import lazy_gettext as _l
 
 from app.config import Config
@@ -27,6 +29,10 @@ def create_app(config_class=Config):
     mail.init_app(app)
     moment.init_app(app)
     babel.init_app(app, locale_selector=get_locale)
+
+    @app.before_request
+    def set_locale():
+        g.locale = str(babel_get_locale())
 
     # Flask-Login config
     login.login_view = 'main.login'

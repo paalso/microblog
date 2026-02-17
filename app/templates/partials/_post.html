@@ -10,6 +10,10 @@
       {{ _("says") }}
       <br>
       {{ post.body }}
+      {% if post.language and post.language != g.locale %}
+        <br>
+        <a class="small" href="#">{{ _("Translate") }}</a>
+      {% endif %}
     </td>
   </tr>
 </table>
