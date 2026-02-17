@@ -17,6 +17,7 @@ from flask import (
 )
 from flask_babel import _
 from flask_login import current_user, login_required, login_user, logout_user
+from langdetect import LangDetectException, detect
 
 from app import Config, db
 from app.forms import (
@@ -42,12 +43,17 @@ main_bp = Blueprint('main', __name__)
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        try:
+            language = detect(form.post.data)
+        except LangDetectException:
+            language = ''
+
+        post = Post(body=form.post.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()
         current_app.logger.info(
             f'📝 New post created by {current_user.username}: '
-            f'"{post.body[:30]}..."')
+            f'"{post.body[:30]}...", detected language: {language}')
         flash(_('Your post is now live!'))
         return redirect(url_for('main.index'))
 
